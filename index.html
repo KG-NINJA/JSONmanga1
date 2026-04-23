@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Manga JSON Maker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>簡単漫画メーカー（デモ）</h1>
+
+<select id="template">
+  <option value="empathy">共感</option>
+  <option value="problem">問題解決</option>
+  <option value="gag">ギャグ</option>
+</select>
+
+<input id="title" placeholder="タイトル">
+
+<textarea id="input" placeholder="1行=1コマ"></textarea>
+
+<button onclick="build()">生成</button>
+
+<h3>JSON</h3>
+<textarea id="json"></textarea>
+
+<h3>Prompt</h3>
+<textarea id="prompt"></textarea>
+
+<script src="app.js"></script>
+
+</body>
+</html>
