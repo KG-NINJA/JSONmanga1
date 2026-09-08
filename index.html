@@ -1,33 +1,93 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>Manga JSON Maker</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="4コマの構成とキャラクター設定をJSONと制作プロンプトにまとめる、オフライン対応ツール。3つの作例付き。画像生成は含みません。">
+  <title>4コマ投稿設計キット | KGNINJA</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
-
-<h1>簡単漫画メーカー（デモ）</h1>
-
-<select id="template">
-  <option value="empathy">共感</option>
-  <option value="problem">問題解決</option>
-  <option value="gag">ギャグ</option>
-</select>
-
-<input id="title" placeholder="タイトル">
-
-<textarea id="input" placeholder="1行=1コマ"></textarea>
-
-<button onclick="build()">生成</button>
-
-<h3>JSON</h3>
-<textarea id="json"></textarea>
-
-<h3>Prompt</h3>
-<textarea id="prompt"></textarea>
-
-<script src="app.js"></script>
-
+  <a class="skip-link" href="#story-form">入力へ移動</a>
+  <header class="site-header">
+    <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">4</span> KGNINJA <span class="brand-sub">CREATOR TOOLS</span></a>
+    <span class="badge">アカウント不要 · オフライン対応</span>
+  </header>
+  <main id="top">
+    <section class="hero" aria-labelledby="page-title">
+      <p class="eyebrow">4コマ投稿設計キット</p>
+      <h1 id="page-title">4コマのアイデアを、<br><span>使える制作指示に。</span></h1>
+      <p class="lead">構成を選び、登場人物と4つの場面を入力。<br>画像制作に渡せるプロンプトと、編集しやすいJSONをまとめて作れます。</p>
+      <p class="scope-note">このツールは画像を生成しません。入力の整形と書き出しをブラウザ内で行います。</p>
+    </section>
+    <section class="examples" aria-labelledby="examples-title">
+      <div class="section-heading"><h2 id="examples-title">まずは、3つの作例から</h2><p>例を選ぶと現在の入力を置き換えます。</p></div>
+      <div class="sample-grid">
+        <button type="button" class="sample" data-sample="empathy"><span class="sample-type">共感</span><strong>最初の一行</strong><span>白い原稿から、二人で一歩。</span><span class="sample-action">この例を読み込む →</span></button>
+        <button type="button" class="sample" data-sample="problem"><span class="sample-type">問題解決</span><strong>鍵の帰る場所</strong><span>毎朝の探し物に、小さな工夫。</span><span class="sample-action">この例を読み込む →</span></button>
+        <button type="button" class="sample" data-sample="gag"><span class="sample-type">ギャグ</span><strong>集中の予約席</strong><span>完璧な仕事環境の、思わぬ主役。</span><span class="sample-action">この例を読み込む →</span></button>
+      </div>
+    </section>
+    <div class="workspace">
+      <section class="editor surface" aria-labelledby="editor-title">
+        <div class="section-heading"><h2 id="editor-title"><span class="step">01</span> ストーリーを組み立てる</h2></div>
+        <form id="story-form" novalidate>
+          <div class="form-row">
+            <div class="field"><label for="title">作品タイトル</label><input id="title" maxlength="100" required autocomplete="off"></div>
+            <div class="field"><label for="template">構成</label><select id="template"><option value="empathy">共感</option><option value="problem">問題解決</option><option value="gag">ギャグ</option></select></div>
+          </div>
+          <fieldset class="characters">
+            <legend>登場人物</legend>
+            <p class="field-help">名前や外見を、全コマで共通の設定として出力します。</p>
+            <div class="character-grid">
+              <div class="character"><label for="character-a-name">人物Aの名前</label><input id="character-a-name" maxlength="40" required autocomplete="off"><label for="character-a-description">人物Aの外見・特徴</label><textarea id="character-a-description" rows="2" maxlength="400" required></textarea></div>
+              <div class="character"><label for="character-b-name">人物Bの名前</label><input id="character-b-name" maxlength="40" required autocomplete="off"><label for="character-b-description">人物Bの外見・特徴</label><textarea id="character-b-description" rows="2" maxlength="400" required></textarea></div>
+            </div>
+          </fieldset>
+          <fieldset class="panels">
+            <legend>4つの場面</legend>
+            <p class="field-help" id="scene-help">動作・表情・背景・セリフを書きます。4コマすべて入力してください（各1,000文字まで）。</p>
+            <div class="panel-field"><label for="scene-1"><span class="panel-number">1</span><span id="role-1">悩み</span></label><textarea id="scene-1" rows="3" maxlength="1000" required aria-describedby="scene-help"></textarea></div>
+            <div class="panel-field"><label for="scene-2"><span class="panel-number">2</span><span id="role-2">あるある</span></label><textarea id="scene-2" rows="3" maxlength="1000" required aria-describedby="scene-help"></textarea></div>
+            <div class="panel-field"><label for="scene-3"><span class="panel-number">3</span><span id="role-3">共感</span></label><textarea id="scene-3" rows="3" maxlength="1000" required aria-describedby="scene-help"></textarea></div>
+            <div class="panel-field"><label for="scene-4"><span class="panel-number">4</span><span id="role-4">救い</span></label><textarea id="scene-4" rows="3" maxlength="1000" required aria-describedby="scene-help"></textarea></div>
+          </fieldset>
+          <div id="errors" class="error-box" role="alert" tabindex="-1" hidden></div>
+          <button type="submit" class="primary">JSONとプロンプトを生成 <span aria-hidden="true">→</span></button>
+          <p class="field-help privacy-note">入力は外部へ送信されません。ページを閉じる前にファイルへ保存してください。</p>
+        </form>
+      </section>
+      <section class="output surface" aria-labelledby="output-title">
+        <div class="section-heading"><h2 id="output-title"><span class="step">02</span> 制作へ持ち出す</h2></div>
+        <p id="status" class="status" role="status" aria-live="polite">作例を編集して、生成ボタンを押してください。</p>
+        <div class="output-block">
+          <div class="output-heading"><label for="prompt">制作プロンプト</label><span>TXT</span></div>
+          <p class="field-help">画像制作を行うツールや、制作担当者に渡す指示文です。</p>
+          <textarea id="prompt" readonly rows="13" spellcheck="false" placeholder="生成したプロンプトがここに表示されます。"></textarea>
+          <div class="actions"><button type="button" data-copy="prompt" disabled>プロンプトをコピー</button><button type="button" data-download="prompt" disabled>TXTを保存 ↓</button></div>
+        </div>
+        <div class="output-block">
+          <div class="output-heading"><label for="json">ストーリーJSON</label><span>JSON</span></div>
+          <p class="field-help">人物・コマ番号・構成・場面を、構造化したデータで保存します。</p>
+          <textarea id="json" readonly rows="10" spellcheck="false" placeholder="生成したJSONがここに表示されます。"></textarea>
+          <div class="actions"><button type="button" data-copy="json" disabled>JSONをコピー</button><button type="button" data-download="json" disabled>JSONを保存 ↓</button></div>
+        </div>
+        <aside class="tip"><strong>仕上がりは、最後に人の目で。</strong><p>指示文を渡しても、絵柄・文字・キャラクターの一貫性は保証されません。生成画像とセリフを確認してから公開してください。画像生成サービスの利用料は含まれません。</p></aside>
+      </section>
+    </div>
+    <section class="how-to" aria-labelledby="how-to-title"><h2 id="how-to-title">使い方は、3ステップ</h2><ol><li><strong>下書きを作る</strong><span>作例を読み込み、人物と4つの場面を自分の企画に合わせて編集。</span></li><li><strong>生成して保存</strong><span>プロンプトを制作へ渡し、JSONは再編集用の資料として保存。</span></li><li><strong>画像を確認して投稿</strong><span>お使いの画像制作ツールで仕上げ、内容と利用条件を確認。</span></li></ol></section>
+    <section class="service surface" aria-labelledby="service-title">
+      <p class="eyebrow">制作フローに合わせたい方へ</p>
+      <h2 id="service-title">このツールのカスタマイズを相談する</h2>
+      <p>フォームの項目、出力する指示文、画面の配色など、小規模な調整をご相談いただけます。</p>
+      <p class="service-price">5,000円〜 <span>内容を確認してからお見積り</span></p>
+      <p class="field-help">変更したい点・利用目的・希望納期をお知らせください。対応範囲、総額、納期、支払い方法は見積り時に相談します。画像生成・自動投稿の導入は、この小規模調整の範囲に含みません。</p>
+      <a class="service-link" href="https://x.com/FuwaCocoOwnerKG" target="_blank" rel="noopener noreferrer">KGNINJAのXで相談する <span aria-hidden="true">↗</span></a>
+      <p class="field-help">このページでは注文・決済は確定しません。まずはご相談ください。</p>
+    </section>
+  </main>
+  <footer><span>KGNINJA · 4コマ投稿設計キット</span><span>画像生成・自動投稿・決済機能なし</span></footer>
+  <noscript><p class="error-box">このツールを使うにはJavaScriptを有効にしてください。</p></noscript>
 </body>
 </html>
